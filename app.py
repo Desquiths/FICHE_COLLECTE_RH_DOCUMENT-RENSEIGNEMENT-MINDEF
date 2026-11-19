@@ -228,9 +228,21 @@ def delete(rid):
     conn.close()
     return redirect(url_for("records", msg="supprime"))
 
+@app.route("/edit")
+@login_required
+def edit():
+    """Affiche le formulaire de recherche."""
+    q = request.args.get("q","").strip()
+    if q:
+        conn = get_conn()
+        rows = conn.execute('SELECT * FROM records WHERE "NOM" LIKE ? OR "MATRICULE" LIKE ? ORDER BY "NOM"', (f"%{q}%", f"%{q}%")).fetchall()
+        conn.close()
+        return render_template("edit.html", q=q, rows=rows)
+    return render_template("edit.html", q="", rows=[])
+
 @app.route("/edit/<int:rid>")
 @login_required
-def edit(rid):
+def edit_record(rid):
     conn = get_conn()
     r = conn.execute("SELECT * FROM records WHERE id=?", (rid,)).fetchone()
     conn.close()
