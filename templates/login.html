@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion admin</title>
+<style>
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1);width:340px}
+h1{color:#1F4E79;font-size:20px;margin-bottom:20px;text-align:center}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+input{width:100%;padding:9px 12px;border:1px solid #ccd6e0;border-radius:6px;font-size:14px;box-sizing:border-box}
+button{width:100%;padding:11px;background:#1F4E79;color:#fff;border:none;border-radius:6px;font-size:14px;margin-top:16px;cursor:pointer}
+.err{color:#c00;font-size:13px;margin-top:8px;text-align:center}
+a{display:block;text-align:center;margin-top:12px;color:#1F4E79;font-size:13px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Accès administrateur</h1>
+  <form method="post">
+    <label>Identifiant</label>
+    <input type="text" name="user">
+    <label>Mot de passe</label>
+    <input type="password" name="pass">
+    <button type="submit">Connexion</button>
+    {% if err %}<div class="err">{{err}}</div>{% endif %}
+  </form>
+  <a href="/saisie">Retour saisie</a>
+</div>
+<script>document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='U'))e.preventDefault();});</script></body>
+</html>

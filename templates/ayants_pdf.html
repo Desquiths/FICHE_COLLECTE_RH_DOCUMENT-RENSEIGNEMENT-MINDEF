@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Export PDF Ayants</title>
+<style>
+body{font-family:Arial,sans-serif;padding:20px}
+h1{color:#1F4E79}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border:1px solid #333;padding:4px}
+th{background:#1F4E79;color:#fff}
+@media print{.noprint{display:none}}
+</style>
+</head>
+<body>
+<h1>Ayants droit {% if mecano %}— Mécano {{mecano}}{% endif %}</h1>
+<button class="noprint" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
+<table>
+  <thead><tr><th>Type</th><th>Nom</th><th>Prénoms</th><th>Date naiss.</th><th>Adresse</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr><td>{{r['type_relation']}}</td><td>{{r['nom_lie']}}</td><td>{{r['prenoms_lie']}}</td><td>{{r['date_naissance']}}</td><td>{{r['adresse']}}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</body>
+</html>
