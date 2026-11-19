@@ -51,6 +51,8 @@ def dashboard():
     by_service = group("UNITE/SERVICE")
     by_sexe = group("SEXE")
     by_grade = group("GRADE ACTUEL")
+    grade_order = {"GBR":1,"CLM":2,"COL":3,"LCL":4,"CEN":5,"CNE":6,"LTN":7,"SLTN":8,"ACM":9,"ADC":10,"ADJ":11,"MDC":12,"MDL":13}
+    by_grade = sorted(by_grade, key=lambda x: grade_order.get(x[0],99))
     conn.close()
     return render_template("dashboard.html", columns=COLUMNS, total=total, recent=recent,
                           by_service=by_service, by_sexe=by_sexe,
