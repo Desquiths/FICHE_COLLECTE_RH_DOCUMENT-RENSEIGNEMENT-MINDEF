@@ -11,18 +11,23 @@ footer{margin-top:40px}
 h1{color:#1F4E79;font-size:22px;margin-bottom:24px}
 .btn{display:inline-block;padding:14px 32px;background:#1F4E79;color:#fff;text-decoration:none;border-radius:8px;font-size:16px}
 .btn:hover{background:#2E75B6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 <div style="position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;padding:8px 0;overflow:hidden;white-space:nowrap;z-index:9999;font-size:13px;font-weight:bold;text-transform:uppercase">
   <marquee behavior="scroll" direction="left" scrollamount="6">🚧 SITE EN CONSTRUCTION — CE SITE EST ACTUELLEMENT EN COURS DE DÉVELOPPEMENT ET EXPOSÉ UNIQUEMENT À DES FINS DE TEST. CERTAINES INFORMATIONS, FONCTIONNALITÉS OU PAGES PEUVENT ÊTRE INCOMPLÈTES OU PROVISOIRES. MERCI DE VOTRE COMPRÉHENSION. © 2026 — FAIT PAR DESQUITH SANLE. TOUS DROITS RÉSERVÉS.</marquee>
 </div>
+{% if msg %}
+<div id="msgbar" style="background:#2e7d32;color:#fff;padding:10px 16px;border-radius:6px;margin-top:40px;font-weight:bold;animation:fadeUp .5s ease both">{{ 'Modification enregistrée avec succès' if msg=='modifie' else 'Enregistrement effectué avec succès' }}</div>
+<script>setTimeout(()=>{const m=document.getElementById('msgbar');if(m){m.style.transition='opacity .6s';m.style.opacity='0';setTimeout(()=>m.remove(),600);}},5500);</script>
+{% endif %}
 <div class="card" style="margin-top:40px">
   <img src="/static/logo.png" alt="logo" style="width:90px;opacity:0.6;margin-bottom:16px">
   <h1>FICHE_COLLECTE_RH_DOCUMENT<br>RENSEIGNEMENT MINDEF</h1>
   <a class="btn" href="/add">Nouvel Enregistrement</a>
   <br><br>
-  <a class="btn" href="/edit">Modifier une saisie</a>
+  <a class="btn" style="background:#c0392b" href="/edit">Modifier une saisie</a>
   <br><br>
   <a class="btn" style="background:#555" href="/login">Accéder au tableau de bord</a>
 </div>

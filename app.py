@@ -75,7 +75,8 @@ def records():
 
 @app.route("/saisie")
 def saisie():
-    return render_template("saisie.html")
+    msg = request.args.get("msg","")
+    return render_template("saisie.html", msg=msg)
 
 STEPS = [
   ["MATRICULE","MECANO","TYPE DE PERSONNE","NOM","PRENOMS","CIVILITE","SITUATION DE FAMILLE","SEXE","DATE DE NAISSANCE","LIEU DE NAISSANCE","LOCALITE","PAYS DE NAISSANCE","NATIONALITE PERSONNELLE"],
@@ -111,9 +112,10 @@ def add(step=1):
         conn.commit()
         conn.close()
         mecano = draft.get("MATRICULE","")
-        msg = "modifie" if session.get("edit_id") else "enregistre"
+        is_edit = bool(session.get("edit_id"))
         session.pop("draft", None)
-        return redirect(url_for("records", msg=msg))
+        session.pop("edit_id", None)
+        return redirect(url_for("saisie", msg="modifie" if is_edit else "enregistre"))
     draft = session.get("draft", {})
     RUBRIQUES = ["IDENTIFICATION PERSONNELLE","CARRIERE ET POSITION STATUTAIRE","AFFECTATION STRATEGIQUE ET OPERATIONNELLE","DOCUMENTS D'IDENTITE ET ADMINISTRATIFS","DONNEES PHYSIQUES ET PERSONNELLES COMPLEMENTAIRES"]
     return render_template("step.html", columns=STEPS[step-1], step=step, total=len(STEPS), draft=draft, rubrique=RUBRIQUES[step-1])
