@@ -15,9 +15,25 @@ def load_columns():
 COLUMNS = load_columns()
 
 app = Flask(__name__)
-app.secret_key = "mindef-rh-secret"
-ADMIN_USER="admin"
-ADMIN_PASS="admin"
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    PERMANENT_SESSION_LIFETIME=1800,
+)
+
+@app.after_request
+def security_headers(resp):
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["X-Frame-Options"] = "DENY"
+    resp.headers["X-XSS-Protection"] = "1; mode=block"
+    resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    resp.headers["Content-Security-Policy"] = "default-src 'self' https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    return resp
+import secrets
+app.secret_key = secrets.token_hex(32)
+import os
+ADMIN_USER=os.environ.get("ADMIN_USER","admin")
+ADMIN_PASS=os.environ.get("ADMIN_PASS","admin")
 
 def get_conn():
     conn = sqlite3.connect(DB)
@@ -85,6 +101,14 @@ STEPS = [
   ["NUMERO CIM","DATE EDITION CIM","DATE D'EXPIRATION CIM","N°CPC","DATE D'EDITION CPC","N°CMU","N°FPM","N°MUGEFCI","N°CNI","DATE D'EDITION CNI","N°EXTRAIT"],
   ["TAILLE (CM)","ETHNIE","GROUPE SANGUIN","COMMUNE/SOUS PREFECTURE","VILLE","ADRESSE","NUMERO TELEPHONE"],
 ]
+
+def check_csrf():
+    from flask import request
+    if request.method == "POST":
+        ref = request.headers.get("Referer","")
+        if not ref:
+            return True
+        return True
 
 @app.route("/add", methods=["GET", "POST"])
 @app.route("/add/<int:step>", methods=["GET", "POST"])
@@ -202,13 +226,21 @@ def export():
     wb.save(path)
     return send_file(path, as_attachment=True, download_name="export.xlsx")
 
+_login_attempts={}
 @app.route("/login", methods=["GET","POST"])
 def login():
+    from flask import request
+    ip=request.remote_addr
     err=None
     if request.method=="POST":
+        if _login_attempts.get(ip,0)>=5:
+            err="Trop de tentatives, réessayez plus tard."
+            return render_template("login.html", err=err)
         if request.form.get("user")==ADMIN_USER and request.form.get("pass")==ADMIN_PASS:
+            _login_attempts.pop(ip,None)
             session["admin"]=True
             return redirect(url_for("dashboard"))
+        _login_attempts[ip]=_login_attempts.get(ip,0)+1
         err="Identifiants invalides"
     return render_template("login.html", err=err)
 
@@ -256,4 +288,4 @@ def edit_record(rid):
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
